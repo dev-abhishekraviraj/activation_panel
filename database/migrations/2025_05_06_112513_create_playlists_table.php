@@ -26,7 +26,7 @@ return new class extends Migration
             $table->tinyInteger('detect_epg')->nullable();
             $table->tinyInteger('disable_groups')->nullable();
             $table->tinyInteger('is_protected')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->tinyInteger('status');
             $table->timestamps();
         });

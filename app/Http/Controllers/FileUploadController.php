@@ -8,6 +8,7 @@ use App\Models\Playlist;
 use App\Models\MacDevice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Helpers\CustomEncryptor;
 
 
 
@@ -107,22 +108,25 @@ class FileUploadController extends Controller
                 }
 
                 if($alluploaded){
-                    if(Auth::user()->role == 1){
+                    if(Auth::user()->is_admin == 1){
                         $mac_id = MacDevice::where('mac_address',Auth::user()->username)->first()->id;
                     }else{
                         $mac_id = $request['mac_id'];
                     }
                     $password='';
                     if($request['is_protected'] == 1){
-                       if($request['id'] != ''){
+                        if($request['id'] != ''){
                             if($request['password'] != ''){
                                 $password = Hash::make($request['password']);
+                                $shareable_password = CustomEncryptor::encrypt($request['password'], env('SALT'));
                             }else{
                                 $record = Playlist::where('id',$request['id'])->first();
                                 $password = $record['password'];
+                                $shareable_password = $record['shareable_password'];
                             }
                         }else{
                                 $password = Hash::make($request['password']);
+                                $shareable_password = CustomEncryptor::encrypt($request['password'], env('SALT'));
                         }
                         
                     }
@@ -144,6 +148,7 @@ class FileUploadController extends Controller
                             'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                             'is_protected' => ($request['is_protected'] == 1)?1:0,
                             'password' => $password,
+                            'shareable_password' => $shareable_password,
                             'status' => ($request['status'] == 'active')?1:0,
                             'created_at' => date('Y-m-d H:i:s'),
                             'updated_at' => date('Y-m-d H:i:s')
@@ -168,6 +173,7 @@ class FileUploadController extends Controller
                             'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                             'is_protected' => ($request['is_protected'] == 1)?1:0,
                             'password' => $password,
+                            'shareable_password' => $shareable_password,
                             'status' => ($request['status'] == 'active')?1:0,
                             'updated_at' => date('Y-m-d H:i:s')
                         ];

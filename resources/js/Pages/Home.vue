@@ -443,7 +443,7 @@ function clearInput(event){
 
 function submit() {
     if(form.type == 'file'){
-        manageChunk(form);
+        manageChunk(form,'client');
     }else{
         form.post(route('client-playlist-register'), {
             forceFormData: true,

@@ -72,7 +72,7 @@ class ApiClientController extends Controller
                                     'message' =>  'Device is already registered.',
                                     'data' => [
                                         'username'=> $request['mac_address'],
-                                        'password'=> CustomEncryptor::decryptInt($password, $salt)
+                                        'password'=> CustomEncryptor::decrypt($password, $salt)
                                     ]
                             ]);
                         }
@@ -93,7 +93,7 @@ class ApiClientController extends Controller
                         User::create([
                             'username' => $request['mac_address'],
                             'password' => Hash::make($password),
-                            'shareable_password' => CustomEncryptor::encryptInt($password, $salt),
+                            'shareable_password' => CustomEncryptor::encrypt($password, $salt),
                             'created_at' => date('Y:m:d H:i:s'),
                             'updated_at' => date('Y:m:d H:i:s')
                         ]);

@@ -451,7 +451,7 @@ function clearInput() {
 function submit() {
 
     if(form.type == 'file' && document.getElementById('m3u_file_input').files[0] != undefined){
-        manageChunk(form);
+        manageChunk(form,'client');
     }
     else{
         form.post(route('client-playlist-edit'), {

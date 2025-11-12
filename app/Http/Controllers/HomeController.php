@@ -124,7 +124,7 @@ class HomeController extends Controller
 
             $mac_id = MacDevice::where('mac_address',Auth::user()->username)->first()->id;
             $password=($request['password'] != '') ? Hash::make($request['password']):'';
-
+            $shareable_password = ($request['password'] != '')?CustomEncryptor::decrypt($request['password'], env('SALT')):'';
 
             if($request['type'] == 'file'){
                 $file = $request->file('m3u_file');
@@ -145,6 +145,7 @@ class HomeController extends Controller
                             'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                             'is_protected' => ($request['is_protected'] == 1)?1:0,
                             'password' => $password,
+                            'shareable_password' => $shareable_password,
                             'status' => ($request['status'] == 'active')?1:0,
                             'created_at' => date('Y-m-d H:i:s'),
                             'updated_at' => date('Y-m-d H:i:s')
@@ -169,6 +170,7 @@ class HomeController extends Controller
                             'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                             'is_protected' => ($request['is_protected'] == 1)?1:0,
                             'password' => $password,
+                            'shareable_password' => $shareable_password,
                             'status' => ($request['status'] == 'active')?1:0,
                             'created_at' => date('Y-m-d H:i:s'),
                             'updated_at' => date('Y-m-d H:i:s')
@@ -261,6 +263,7 @@ class HomeController extends Controller
             $record = Playlist::where('id',$request['id'])->first();
             if($request['is_protected'] == 1){
                 $password=($request['password'] != '') ? Hash::make($request['password']):$record->password;
+                $shareable_password = ($request['password'] != '')?CustomEncryptor::decrypt($request['password'], env('SALT')):$record->shareable_password;
             }else{
                 $password='';
             }
@@ -293,6 +296,7 @@ class HomeController extends Controller
                                 'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                                 'is_protected' => ($request['is_protected'] == 1)?1:0,
                                 'password' => $password,
+                                'shareable_password' => $shareable_password,
                                 'status' => ($request['status'] == 'active')?1:0,
                                 'updated_at' => date('Y-m-d H:i:s')
                             ];
@@ -316,6 +320,7 @@ class HomeController extends Controller
                                 'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                                 'is_protected' => ($request['is_protected'] == 1)?1:0,
                                 'password' => $password,
+                                'shareable_password' => $shareable_password,
                                 'status' => ($request['status'] == 'active')?1:0,
                                 'updated_at' => date('Y-m-d H:i:s')
                             ];
@@ -399,7 +404,7 @@ class HomeController extends Controller
             $salt = env('SALT');
             User::where('id',Auth::user()->id)->update([
                 'password' => Hash::make($request['password']),
-                'shareable_password' => CustomEncryptor::encryptInt($request['password'], $salt),
+                'shareable_password' => CustomEncryptor::encrypt($request['password'], $salt),
             ]);
             $request->session()->put('device_key', $request['password']);
             return response()->json([
@@ -432,7 +437,7 @@ class HomeController extends Controller
     protected function get_device_details(){
         $salt = env('SALT');
         $device = MacDevice::where('mac_address', Auth::user()->username)->first();
-        $device_key =  CustomEncryptor::decryptInt(Auth::user()->shareable_password, $salt);
+        $device_key =  CustomEncryptor::decrypt(Auth::user()->shareable_password, $salt);
         $device->device_key = $device_key;
         return $device;
     }

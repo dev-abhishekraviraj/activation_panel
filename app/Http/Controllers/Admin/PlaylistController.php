@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\Playlist;
 use App\Models\MacDevice;
 use Carbon\Carbon;
+use App\Helpers\CustomEncryptor;
 
 
 
@@ -24,6 +25,7 @@ class PlaylistController extends Controller
                 'stream_line' => $record->stream_line,
                 'type' => $record->type,
                 'is_protected' => $record->is_protected,
+                'password' => CustomEncryptor::decrypt($record['shareable_password'] ?? '', env('SALT')),
                 'status' => $record->status,
                 'created_at' => Carbon::parse($record->created_at)->format('jS F Y'),
 
@@ -98,6 +100,7 @@ class PlaylistController extends Controller
                                 'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                                 'is_protected' => ($request['is_protected'] == 1)?1:0,
                                 'password' => \Hash::make($request['password']) ?? '',
+                                'shareable_password' => CustomEncryptor::encrypt($request['password'], env('SALT'))??'',
                                 'status' => ($request['status'] == 'active')?1:0,
                                 'created_at' => date('Y-m-d H:i:s'),
                                 'updated_at' => date('Y-m-d H:i:s')
@@ -123,6 +126,7 @@ class PlaylistController extends Controller
                                 'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                                 'is_protected' => ($request['is_protected'] == 1)?1:0,
                                 'password' => ($request['password'] != '')?\Hash::make($request['password']):'',
+                                'shareable_password' => ($request['password'] != '')?CustomEncryptor::encrypt($request['password'], env('SALT')):'',
                                 'status' => ($request['status'] == 'active')?1:0,
                                 'created_at' => date('Y-m-d H:i:s'),
                                 'updated_at' => date('Y-m-d H:i:s')
@@ -188,8 +192,10 @@ class PlaylistController extends Controller
             //Updation works starts
             if($request['is_protected'] == 1){
                 $password=($request['password'] != '')?\Hash::make($request['password']):$record->password;
+                $shareable_password = ($request['password'] != '')?CustomEncryptor::encrypt($request['password'], env('SALT')):$record->shareable_password;
             }else{
                 $password='';
+                $shareable_password = '';
             }
             if($request['type'] == 'file'){
 
@@ -216,6 +222,7 @@ class PlaylistController extends Controller
                             'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                             'is_protected' => ($request['is_protected'] == 1)?1:0,
                             'password' => $password,
+                            'shareable_password' => $shareable_password,
                             'status' => ($request['status'] == 'active')?1:0,
                             'updated_at' => date('Y-m-d H:i:s')
                         ];
@@ -240,6 +247,7 @@ class PlaylistController extends Controller
                     'disable_groups' => ($request['disable_groups'] == 1)?1:0,
                     'is_protected' => ($request['is_protected'] == 1)?1:0,
                     'password' => $password,
+                    'shareable_password' => $shareable_password,
                     'status' => ($request['status'] == 'active')?1:0,
                     'updated_at' => date('Y-m-d H:i:s')
                 ];

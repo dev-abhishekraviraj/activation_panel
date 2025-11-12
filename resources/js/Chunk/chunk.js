@@ -2,12 +2,14 @@ import axios from 'axios';
 import { router } from '@inertiajs/vue3';
 
 async function manageChunk(form,role) {
-
+ 
   let file = document.getElementById('m3u_file_input').files[0];
   let errors = false;
   document.querySelector('.error_messages').innerHTML = '';
   document.getElementById('playlist_name').style.borderColor = '';
-  document.getElementById('mac_address').style.borderColor = '';
+  if(role == 'admin'){
+    document.getElementById('mac_address').style.borderColor = '';
+  }
   document.getElementById('m3u_file_input').style.borderColor = '';
   if(form.is_protected){
     document.getElementById('password').style.borderColor = '';
@@ -52,10 +54,13 @@ async function manageChunk(form,role) {
           errors = true;
         }
         if(password != '' && password_confirmation != ''){
-          document.getElementById('password').style.borderColor = 'red';
-          document.getElementById('password_confirmation').style.borderColor = 'red';
-          errorMessages += 'Password and password confirmation field is must be same.<br>';
-          errors = true;
+            if(password != password_confirmation){
+              document.getElementById('password').style.borderColor = 'red';
+              document.getElementById('password_confirmation').style.borderColor = 'red';
+              errorMessages += 'Password and password confirmation field is must be same.<br>';
+              errors = true;
+            }
+          
         }
     }
     else{

@@ -15,6 +15,7 @@
                             <th scope="col">Playlist</th>
                             <th scope="col">Type</th>
                             <th scope="col">Password Protected</th>
+                            <th scope="col">Password</th>
                             <th scope="col">Status</th>
                             <th scope="col">Created On</th>
                             <th scope="col">Actions</th>
@@ -34,6 +35,7 @@
                                 </td>
                                 <td>{{ record.type.toUpperCase() }}</td>
                                 <td><span class="badge badge-success" v-if="record.is_protected == 1">Yes</span><span class="badge badge-danger" v-else>No</span></td>
+                                <td><span v-if="record.is_protected == 1"><input type="password" :value="record.password" style="border:unset;" :class="'password_input_' + record.id"/><i class="fa fa-eye" style="position:absolute;right:440px;" @click="togglePassword(record.id)"></i></span><span v-else>N/A</span></td>
                                 <td v-if="record.status == 1">
                                     <span class="badge badge-success">Active</span>
                                 </td>
@@ -43,7 +45,7 @@
                                 <td>{{ record.created_at }}</td>
                                 <td>
                                     <button class="btn btn-success" @click="(record.is_protected == 1)?openValidatePasswordModal(record.id,'edit'):router.visit(route('admin-playlist-edit', [record.id]))" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></button>
-                                    <button class="btn btn-danger" @click="(record.is_protected == 1)?openValidatePasswordModal(record.id,'delete'):deleteRecord(record.id)" data-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
+                                    &nbsp<button class="btn btn-danger" @click="(record.is_protected == 1)?openValidatePasswordModal(record.id,'delete'):deleteRecord(record.id)" data-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
                                 </td>
                             </tr>
                         </template>
@@ -106,6 +108,16 @@ const validatePasswordForm = useForm({
     password: '',
     action: ''
 })
+
+function togglePassword(id){
+  
+    let password_input = document.querySelector('.password_input_' + id);
+    if(password_input.getAttribute('type') == 'password'){
+        password_input.setAttribute('type','text');
+    }else{
+        password_input.setAttribute('type','password');
+    }
+}
 
 function openValidatePasswordModal(id, action) {
     validatePasswordForm.id = id;

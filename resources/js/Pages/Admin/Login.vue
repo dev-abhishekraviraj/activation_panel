@@ -24,6 +24,7 @@
                     <div class="form-group">
                         <label>Password</label>
                         <input type="password" :class="['form-control',{'border-danger':$page.props.errors.password}]" v-model="form.password" placeholder="Password">
+                         <i class="fa fa-eye" style="position:absolute;right:455px; top:191px;"></i>
                         <div v-if="$page.props.errors.password" class="text-danger">{{ $page.props.errors.password }}</div>
                     </div>
                     <!-- <div class="checkbox">
