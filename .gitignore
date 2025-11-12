@@ -1,0 +1,43 @@
+# Laravel specific
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build & temporary files
+/public/build
+/public/m3u_temp
+/public/m3u_files
+/public/storage
+/public/vendors
+
+# Laravel caches and compiled files
+/public/storage
+/storage/*.key
+/storage/app/public
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*.php
+
+# Environment & IDE files
+.env
+.env.backup
+.env.example.local
+
+# OS or editor specific
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Composer & NPM lock files (optional)
+# Uncomment these if you prefer not to version them:
+# composer.lock
+# package-lock.json
+
+# PHPUnit test results
+.phpunit.result.cache
+
